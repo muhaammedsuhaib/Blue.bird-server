@@ -13,15 +13,15 @@ app.use(cookieParser());
 
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "";
 
-// const corsOptions: cors.CorsOptions = {
-//   origin: allowedOrigin,
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-//   preflightContinue: false,
-//   optionsSuccessStatus: 204,
-//   credentials: true,
-// };
+const corsOptions: cors.CorsOptions = {
+  origin: allowedOrigin,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true,
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 connectDB();
 
