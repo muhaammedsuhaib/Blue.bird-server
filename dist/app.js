@@ -35,9 +35,19 @@ const cors_1 = __importDefault(require("cors"));
 dotenv.config();
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
-const allowedOrigin = process.env.ALLOWED_ORIGIN || "";
+const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim());
 const corsOptions = {
-    origin: allowedOrigin,
+    origin: (origin, callback) => {
+        console.log("Request Origin:", origin);
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
