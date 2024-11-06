@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
 import authRoutes from "./modules/auth/auth.routes";
+import userRoutes from "./modules/user/user.routes";
 import connectDB from "./config/db";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
@@ -20,8 +21,6 @@ const corsOptions: CorsOptions = {
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    console.log("Request Origin:", origin);
-
     if (allowedOrigins.includes(origin as string) || !origin) {
       callback(null, true);
     } else {
@@ -41,6 +40,7 @@ connectDB();
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Blue bird application!");

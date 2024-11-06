@@ -6,7 +6,7 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: true,
         unique: true,
-        trim: true
+        trim: true,
     },
     email: {
         type: String,
@@ -17,41 +17,41 @@ const userSchema = new mongoose_1.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     bio: {
         type: String,
-        default: ""
+        default: "",
     },
     profilePicture: {
         type: String,
-        default: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+        default: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg",
     },
     followers: {
         type: [String],
-        default: []
+        default: [],
     },
     following: {
         type: [String],
-        default: []
+        default: [],
     },
     posts: {
         type: [String],
-        default: []
+        default: [],
     },
     likedPosts: {
         type: [String],
-        default: []
+        default: [],
     },
     comments: {
         type: [String],
-        default: []
+        default: [],
     },
     lastLogin: {
-        type: Date
+        type: Date,
     },
 }, {
     timestamps: true,
 });
-const User = (0, mongoose_1.model)('User', userSchema);
+const User = (0, mongoose_1.model)("User", userSchema);
 exports.default = User;

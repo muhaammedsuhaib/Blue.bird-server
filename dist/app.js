@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
+const user_routes_1 = __importDefault(require("./modules/user/user.routes"));
 const db_1 = __importDefault(require("./config/db"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
@@ -40,7 +41,6 @@ const allowedOrigins = (process.env.ALLOWED_ORIGIN || "")
     .map((origin) => origin.trim());
 const corsOptions = {
     origin: (origin, callback) => {
-        console.log("Request Origin:", origin);
         if (allowedOrigins.includes(origin) || !origin) {
             callback(null, true);
         }
@@ -57,6 +57,7 @@ app.use((0, cors_1.default)(corsOptions));
 (0, db_1.default)();
 app.use(express_1.default.json());
 app.use("/api/auth", auth_routes_1.default);
+app.use("/api/user", user_routes_1.default);
 app.get("/", (req, res) => {
     res.send("Welcome to Blue bird application!");
 });

@@ -20,15 +20,11 @@ const registration = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const { username, email, password, bio, profilePicture } = req.body;
     const existingUser = yield user_model_1.default.findOne({ email });
     if (existingUser) {
-        return res
-            .status(400)
-            .json({ message: 'Email already exists' });
+        return res.status(400).json({ message: "Email already exists" });
     }
     const existingUsername = yield user_model_1.default.findOne({ username });
     if (existingUsername) {
-        return res
-            .status(400)
-            .json({ message: 'Username already exists' });
+        return res.status(400).json({ message: "Username already exists" });
     }
     const salt = yield bcrypt_1.default.genSalt(10);
     const hashedPassword = yield bcrypt_1.default.hash(password, salt);
@@ -41,7 +37,7 @@ const registration = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     });
     yield newUser.save();
     return res.status(201).json({
-        message: 'User registered successfully',
+        message: "User registered successfully",
         data: {
             user: newUser,
         },
@@ -52,23 +48,23 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = yield user_model_1.default.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+        return res.status(400).json({ message: "Invalid email or password" });
     }
     const isMatch = yield bcrypt_1.default.compare(password, user.password);
     if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid email or password' });
+        return res.status(400).json({ message: "Invalid email or password" });
     }
     const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET_USER, {
-        expiresIn: '1h',
+        expiresIn: "1h",
     });
-    res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+    res.cookie("userToken", token, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 1000,
-        sameSite: 'strict'
+        sameSite: "strict",
     });
     return res.status(200).json({
-        message: 'Login successful',
+        message: "Login successful",
         data: {
             token,
             user: {
