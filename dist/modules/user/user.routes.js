@@ -9,4 +9,5 @@ const user_controllers_1 = require("./user.controllers");
 const router = express_1.default.Router();
 router.get("/:id", (0, try_catch_1.default)(user_controllers_1.profile));
 router.get("/suggestions/:id", (0, try_catch_1.default)(user_controllers_1.suggestion_profiles));
+router.get("/search/:id", (0, try_catch_1.default)(user_controllers_1.search_profiles));
 exports.default = router;

@@ -46,3 +46,33 @@ export const suggestion_profiles = async (
   });
 };
 
+export const search_profiles = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+  const { query } = req.query;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
+
+  const searchCriteria: any = { _id: { $ne: id } };
+  if (query) {
+    searchCriteria.$or = [
+      { username: { $regex: query, $options: "i" } },
+      { email: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  const profiles = await User.find(searchCriteria);
+
+  if (!profiles.length) {
+    return res.status(404).json({ message: "No profiles found" });
+  }
+
+  return res.status(200).json({
+    message: "Suggested profiles retrieved successfully",
+    data: profiles,
+  });
+};
