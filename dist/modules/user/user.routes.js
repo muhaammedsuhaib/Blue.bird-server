@@ -6,8 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const try_catch_1 = __importDefault(require("../../middleware/try_catch"));
 const user_controllers_1 = require("./user.controllers");
+const uplod_image_1 = __importDefault(require("../../middleware/uplod_image"));
+const post_controllers_1 = require("../post/post.controllers");
 const router = express_1.default.Router();
 router.get("/:id", (0, try_catch_1.default)(user_controllers_1.profile));
 router.get("/suggestions/:id", (0, try_catch_1.default)(user_controllers_1.suggestion_profiles));
 router.get("/search/:id", (0, try_catch_1.default)(user_controllers_1.search_profiles));
+// create post 
+router.post("/post", uplod_image_1.default, (0, try_catch_1.default)(post_controllers_1.create_post));
 exports.default = router;

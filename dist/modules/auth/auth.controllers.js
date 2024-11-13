@@ -64,7 +64,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         sameSite: "strict",
     });
     return res.status(200).json({
-        message: "Login successful",
+        message: "Login sucessfully",
         data: {
             token,
             user: {
