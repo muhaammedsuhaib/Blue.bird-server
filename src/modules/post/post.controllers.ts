@@ -46,3 +46,45 @@ export const create_post = async (
     data: newPost,
   });
 };
+
+export const get_posts = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const posts = await Post.find()
+    .populate("author", "username profilePicture")
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    message: "Posts retrieved successfully",
+    data: posts,
+  });
+};
+
+export const unique_post = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
+  const post = await Post.findById(id)
+    .populate("author", "username profilePicture")
+    .populate({
+      path: "comments",
+      populate: [
+        { path: "author", select: "username profilePicture" },
+        {
+          path: "replies",
+          populate: { path: "author", select: "username profilePicture" },
+        },
+      ],
+    });
+
+  return res.status(200).json({
+    message: "Post retrieved successfully",
+    data: post,
+  });
+};

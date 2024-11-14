@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import * as dotenv from "dotenv";
 import authRoutes from "./modules/auth/auth.routes";
 import userRoutes from "./modules/user/user.routes";
+import userPost from "./modules/post/post.routes";
+import userComment from "./modules/comment/comment.routes";
 import connectDB from "./config/db";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
@@ -41,6 +43,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/post", userPost);
+app.use("/api/comment", userComment);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Blue bird application!");

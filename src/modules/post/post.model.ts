@@ -1,12 +1,6 @@
 import mongoose, { Schema, model, Document, Types } from "mongoose";
+import { IComment } from "../comment/comment.model";
 
-interface IComment extends Document {
-  author: Types.ObjectId;
-  content: string;
-  description:string,
-  replies: IComment[];
-  createdAt?: Date;
-}
 
 export interface IPost extends Document {
   _id: mongoose.Types.ObjectId;
@@ -14,19 +8,10 @@ export interface IPost extends Document {
   content: string;
   likes: mongoose.Types.ObjectId[];
   description:string,
-  comments: IComment[];
+  comments: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-const commentSchema = new Schema<IComment>(
-  {
-    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    content: { type: String, required: true },
-    replies: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
-  },
-  { timestamps: true }
-);
 
 const postSchema = new Schema<IPost>(
   {
@@ -34,7 +19,7 @@ const postSchema = new Schema<IPost>(
     content: { type: String, required: true }, 
     description:{ type: String },
     likes: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
-    comments: { type: [commentSchema], default: [] },
+    comments: { type: [Schema.Types.ObjectId], ref: "Comment", default: [] },
   },
   { timestamps: true }
 );

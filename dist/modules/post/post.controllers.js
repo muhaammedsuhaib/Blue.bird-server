@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create_post = void 0;
+exports.unique_post = exports.get_posts = exports.create_post = void 0;
 const post_model_1 = __importDefault(require("./post.model"));
 const mongoose_1 = require("mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
@@ -43,3 +43,36 @@ const create_post = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     });
 });
 exports.create_post = create_post;
+const get_posts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const posts = yield post_model_1.default.find()
+        .populate("author", "username profilePicture")
+        .sort({ createdAt: -1 });
+    return res.status(200).json({
+        message: "Posts retrieved successfully",
+        data: posts,
+    });
+});
+exports.get_posts = get_posts;
+const unique_post = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    if (!mongoose_2.default.isValidObjectId(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+    }
+    const post = yield post_model_1.default.findById(id)
+        .populate("author", "username profilePicture")
+        .populate({
+        path: "comments",
+        populate: [
+            { path: "author", select: "username profilePicture" },
+            {
+                path: "replies",
+                populate: { path: "author", select: "username profilePicture" },
+            },
+        ],
+    });
+    return res.status(200).json({
+        message: "Post retrieved successfully",
+        data: post,
+    });
+});
+exports.unique_post = unique_post;

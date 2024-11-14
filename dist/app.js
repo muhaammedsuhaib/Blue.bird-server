@@ -30,6 +30,8 @@ const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const auth_routes_1 = __importDefault(require("./modules/auth/auth.routes"));
 const user_routes_1 = __importDefault(require("./modules/user/user.routes"));
+const post_routes_1 = __importDefault(require("./modules/post/post.routes"));
+const comment_routes_1 = __importDefault(require("./modules/comment/comment.routes"));
 const db_1 = __importDefault(require("./config/db"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
@@ -58,6 +60,8 @@ app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use("/api/auth", auth_routes_1.default);
 app.use("/api/user", user_routes_1.default);
+app.use("/api/post", post_routes_1.default);
+app.use("/api/comment", comment_routes_1.default);
 app.get("/", (req, res) => {
     res.send("Welcome to Blue bird application!");
 });
