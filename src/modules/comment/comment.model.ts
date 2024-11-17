@@ -13,7 +13,7 @@ const commentSchema = new Schema<IComment>(
   {
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true },
-    post: { type: Schema.Types.ObjectId, ref: "Post", required: true }, // Add the post reference
+    post: { type: Schema.Types.ObjectId, ref: "Post", required: true }, 
     replies: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
   { timestamps: true }

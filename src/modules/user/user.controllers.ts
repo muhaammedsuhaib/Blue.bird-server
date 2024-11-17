@@ -12,13 +12,28 @@ export const profile = async (
     return res.status(400).json({ message: "Invalid ID format" });
   }
 
-  const profile = await User.findById(id);
+  const profile = await User.findById(id).populate({
+    path: "posts",
+    select: "content description likes comments createdAt updatedAt",
+    populate: [
+      {
+        path: "comments",
+        select: "_id",
+      },
+      {
+        path: "likes",
+        select: "_id",
+      },
+    ],
+  });
+
   if (!profile) {
     return res.status(404).json({ message: "User not found" });
   }
-  return res
-    .status(200)
-    .json({ message: "User profile retrieved successfully", data: profile });
+  return res.status(200).json({
+    message: "User profile retrieved successfully",
+    data: profile,
+  });
 };
 
 export const suggestion_profiles = async (

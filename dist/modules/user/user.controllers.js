@@ -20,13 +20,27 @@ const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongoose_1.default.isValidObjectId(id)) {
         return res.status(400).json({ message: "Invalid ID format" });
     }
-    const profile = yield user_model_1.default.findById(id);
+    const profile = yield user_model_1.default.findById(id).populate({
+        path: "posts",
+        select: "content description likes comments createdAt updatedAt",
+        populate: [
+            {
+                path: "comments",
+                select: "_id",
+            },
+            {
+                path: "likes",
+                select: "_id",
+            },
+        ],
+    });
     if (!profile) {
         return res.status(404).json({ message: "User not found" });
     }
-    return res
-        .status(200)
-        .json({ message: "User profile retrieved successfully", data: profile });
+    return res.status(200).json({
+        message: "User profile retrieved successfully",
+        data: profile,
+    });
 });
 exports.profile = profile;
 const suggestion_profiles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

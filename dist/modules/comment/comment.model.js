@@ -27,7 +27,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const commentSchema = new mongoose_1.Schema({
     author: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
     content: { type: String, required: true },
-    post: { type: mongoose_1.Schema.Types.ObjectId, ref: "Post", required: true }, // Add the post reference
+    post: { type: mongoose_1.Schema.Types.ObjectId, ref: "Post", required: true },
     replies: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comment" }],
 }, { timestamps: true });
 const Comment = mongoose_1.default.model("Comment", commentSchema);

@@ -7,11 +7,11 @@ export interface IUser extends Document {
   password: string;
   bio?: string;
   profilePicture?: string;
-  followers: string[];
-  following: string[];
-  posts?: string[];
-  likedPosts?: string[];
-  comments?: string[];
+  followers: mongoose.Types.ObjectId[];
+  following: mongoose.Types.ObjectId[];
+  posts?: mongoose.Types.ObjectId[];
+  likedPosts?: mongoose.Types.ObjectId[];
+  comments?: mongoose.Types.ObjectId[];
   lastLogin?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -42,27 +42,26 @@ const userSchema = new Schema<IUser>(
     },
     profilePicture: {
       type: String,
-      default:
-        "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg",
+      default: "https://bluebir-d.vercel.app/user-profile.png",
     },
     followers: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       default: [],
     },
     following: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
       default: [],
     },
     posts: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
       default: [],
     },
     likedPosts: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
       default: [],
     },
     comments: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
       default: [],
     },
     lastLogin: {
