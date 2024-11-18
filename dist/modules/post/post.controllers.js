@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unique_post = exports.get_posts = exports.create_post = void 0;
+exports.toggle_like = exports.unique_post = exports.get_posts = exports.create_post = void 0;
 const post_model_1 = __importDefault(require("./post.model"));
 const mongoose_1 = require("mongoose");
 const mongoose_2 = __importDefault(require("mongoose"));
@@ -76,3 +76,46 @@ const unique_post = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     });
 });
 exports.unique_post = unique_post;
+const toggle_like = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, postId } = req.body;
+    if (!mongoose_2.default.isValidObjectId(userId) || !mongoose_2.default.isValidObjectId(postId)) {
+        return res.status(400).json({ message: "Invalid ID format." });
+    }
+    const session = yield mongoose_2.default.startSession();
+    session.startTransaction();
+    try {
+        const post = yield post_model_1.default.findById(postId).session(session);
+        const user = yield user_model_1.default.findById(userId).session(session);
+        if (!post || !user) {
+            yield session.abortTransaction();
+            return res.status(404).json({ message: "User or Post not found." });
+        }
+        user.likedPosts = user.likedPosts || [];
+        const isLiked = post.likes.includes(userId);
+        if (isLiked) {
+            post.likes = post.likes.filter((like) => like.toString() !== userId);
+            user.likedPosts = user.likedPosts.filter((likedPostId) => likedPostId.toString() !== postId);
+            yield post.save({ session });
+            yield user.save({ session });
+            yield session.commitTransaction();
+            return res.status(200).json({ message: "Post unliked successfully." });
+        }
+        else {
+            post.likes.push(userId);
+            user.likedPosts.push(postId);
+            yield post.save({ session });
+            yield user.save({ session });
+            yield session.commitTransaction();
+            return res.status(200).json({ message: "Post liked successfully." });
+        }
+    }
+    catch (error) {
+        yield session.abortTransaction();
+        console.error("Error during like/unlike operation:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+    finally {
+        session.endSession();
+    }
+});
+exports.toggle_like = toggle_like;

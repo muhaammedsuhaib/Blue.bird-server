@@ -58,10 +58,10 @@ const corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 (0, db_1.default)();
 app.use(express_1.default.json());
-app.use("/api/auth", auth_routes_1.default);
-app.use("/api/user", user_routes_1.default);
-app.use("/api/post", post_routes_1.default);
-app.use("/api/comment", comment_routes_1.default);
+app.use("/api", auth_routes_1.default);
+app.use("/api", user_routes_1.default);
+app.use("/api", post_routes_1.default);
+app.use("/api", comment_routes_1.default);
 app.get("/", (req, res) => {
     res.send("Welcome to Blue bird application!");
 });

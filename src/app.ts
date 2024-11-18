@@ -41,10 +41,10 @@ connectDB();
 
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/post", userPost);
-app.use("/api/comment", userComment);
+app.use("/api", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api", userPost);
+app.use("/api", userComment);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Blue bird application!");

@@ -6,7 +6,7 @@ import { login_validation, user_validation } from "./auth.validation";
 
 const router = express.Router();
 
-router.post("/register", validate(user_validation), tryCatch(registration));
-router.post("/login", validate(login_validation), tryCatch(login));
+router.post("/auth/register", validate(user_validation), tryCatch(registration));
+router.post("/auth/login", validate(login_validation), tryCatch(login));
 
 export default router;
