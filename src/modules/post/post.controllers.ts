@@ -3,13 +3,11 @@ import Post from "./post.model";
 import { Types } from "mongoose";
 import mongoose from "mongoose";
 import User from "../user/user.model";
+import { IUplodimage } from "../../middleware/uplod_image";
 
-interface Uplodimage extends Request {
-  cloudinaryImageUrl?: string;
-}
 
 export const create_post = async (
-  req: Uplodimage,
+  req: IUplodimage,
   res: Response
 ): Promise<Response> => {
   const { description, author } = req.body;

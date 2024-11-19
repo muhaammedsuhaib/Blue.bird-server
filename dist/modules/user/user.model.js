@@ -58,6 +58,14 @@ const userSchema = new mongoose_1.Schema({
         type: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" }],
         default: [],
     },
+    stories: {
+        type: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Story" }],
+        default: [],
+    },
+    archivedStories: {
+        type: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Story" }],
+        default: [],
+    },
     posts: {
         type: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Post" }],
         default: [],

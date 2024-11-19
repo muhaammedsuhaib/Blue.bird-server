@@ -7,6 +7,9 @@ interface CustomRequest extends Request {
   cloudinaryImageUrl?: string;
 }
 
+export interface IUplodimage extends Request {
+  cloudinaryImageUrl?: string;
+}
 const storage: StorageEngine = multer.memoryStorage();
 
 const upload = multer({
@@ -23,7 +26,6 @@ const upload_image = (
     if (error) {
       return res.status(400).json({ message: "Error uploading file" });
     }
-
     if (req.file) {
       try {
         const result = await cloudinary.uploader.upload_stream(

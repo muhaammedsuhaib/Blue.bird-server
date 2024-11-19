@@ -4,9 +4,12 @@ import authRoutes from "./modules/auth/auth.routes";
 import userRoutes from "./modules/user/user.routes";
 import userPost from "./modules/post/post.routes";
 import userComment from "./modules/comment/comment.routes";
+import userStorie from "./modules/storie/storie.routes";
 import connectDB from "./config/db";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
+
+import "./service/cron_jobs";
 
 dotenv.config();
 
@@ -45,6 +48,7 @@ app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", userPost);
 app.use("/api", userComment);
+app.use("/api", userStorie);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Blue bird application!");
