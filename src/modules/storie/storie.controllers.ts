@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import mongoose, { Types } from "mongoose";
 import User from "../user/user.model";
 import Story from "./storie.model";
@@ -8,7 +8,7 @@ export const create_storie = async (
   req: IUplodimage,
   res: Response
 ): Promise<Response> => {
-  const { description, author } = req.body;
+  const { author } = req.body;
 
   const content = req.cloudinaryImageUrl;
 
@@ -27,7 +27,6 @@ export const create_storie = async (
   const newstories = new Story({
     author: new Types.ObjectId(author),
     content,
-    description,
   });
 
   await newstories.save();
@@ -40,5 +39,75 @@ export const create_storie = async (
   return res.status(201).json({
     message: "stories created successfully",
     data: newstories,
+  });
+};
+
+export const get_stories = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid user ID format" });
+  }
+
+  const user = await User.findById(id).populate("following", "_id");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const followingIds = user.following.map(
+    (followedUser: any) => followedUser._id
+  );
+
+  const stories = await Story.aggregate([
+    {
+      $match: {
+        author: { $in: followingIds },
+        isArchived: false,
+      },
+    },
+    {
+      $group: {
+        _id: "$author",
+        stories: {
+          $push: {
+            content: "$content",
+            description: "$description",
+            postedAt: "$postedAt",
+            _id: "$_id",
+          },
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    {
+      $unwind: "$authorDetails",
+    },
+    {
+      $project: {
+        _id: 0,
+        author: {
+          _id: "$authorDetails._id",
+          username: "$authorDetails.username",
+          profilePicture: "$authorDetails.profilePicture",
+        },
+        stories: 1,
+      },
+    },
+  ]);
+
+  return res.status(200).json({
+    message: "Stories retrieved successfully",
+    data: stories,
   });
 };

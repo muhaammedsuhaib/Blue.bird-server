@@ -38,7 +38,6 @@ const storySchema = new mongoose_1.Schema({
         ref: "User",
         required: true,
     },
-    description: { type: String },
     isArchived: {
         type: Boolean,
         default: false,

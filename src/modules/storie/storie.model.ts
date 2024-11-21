@@ -23,7 +23,6 @@ const storySchema = new Schema<IStory>(
       ref: "User",
       required: true,
     },
-    description: { type: String },
     isArchived: {
       type: Boolean,
       default: false,

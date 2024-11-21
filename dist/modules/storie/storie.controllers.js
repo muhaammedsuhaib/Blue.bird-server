@@ -35,12 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create_storie = void 0;
+exports.get_stories = exports.create_storie = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const user_model_1 = __importDefault(require("../user/user.model"));
 const storie_model_1 = __importDefault(require("./storie.model"));
 const create_storie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { description, author } = req.body;
+    const { author } = req.body;
     const content = req.cloudinaryImageUrl;
     if (!mongoose_1.default.isValidObjectId(author)) {
         return res.status(400).json({ message: "Invalid ID format" });
@@ -55,7 +55,6 @@ const create_storie = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const newstories = new storie_model_1.default({
         author: new mongoose_1.Types.ObjectId(author),
         content,
-        description,
     });
     yield newstories.save();
     yield user_model_1.default.updateOne({ _id: new mongoose_1.Types.ObjectId(author) }, { $push: { stories: newstories._id } });
@@ -65,3 +64,62 @@ const create_storie = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
 });
 exports.create_storie = create_storie;
+const get_stories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    if (!mongoose_1.default.isValidObjectId(id)) {
+        return res.status(400).json({ message: "Invalid user ID format" });
+    }
+    const user = yield user_model_1.default.findById(id).populate("following", "_id");
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    const followingIds = user.following.map((followedUser) => followedUser._id);
+    const stories = yield storie_model_1.default.aggregate([
+        {
+            $match: {
+                author: { $in: followingIds },
+                isArchived: false,
+            },
+        },
+        {
+            $group: {
+                _id: "$author",
+                stories: {
+                    $push: {
+                        content: "$content",
+                        description: "$description",
+                        postedAt: "$postedAt",
+                        _id: "$_id",
+                    },
+                },
+            },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "_id",
+                foreignField: "_id",
+                as: "authorDetails",
+            },
+        },
+        {
+            $unwind: "$authorDetails",
+        },
+        {
+            $project: {
+                _id: 0,
+                author: {
+                    _id: "$authorDetails._id",
+                    username: "$authorDetails.username",
+                    profilePicture: "$authorDetails.profilePicture",
+                },
+                stories: 1,
+            },
+        },
+    ]);
+    return res.status(200).json({
+        message: "Stories retrieved successfully",
+        data: stories,
+    });
+});
+exports.get_stories = get_stories;
