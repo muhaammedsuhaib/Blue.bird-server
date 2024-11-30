@@ -20,20 +20,44 @@ const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!mongoose_1.default.isValidObjectId(id)) {
         return res.status(400).json({ message: "Invalid ID format" });
     }
-    const profile = yield user_model_1.default.findById(id).populate({
-        path: "posts",
-        select: "content description likes comments createdAt updatedAt",
-        populate: [
-            {
-                path: "comments",
-                select: "_id",
+    const profile = yield user_model_1.default.findById(id).populate([
+        {
+            path: "posts",
+            select: "content description likes comments createdAt updatedAt",
+            populate: [
+                {
+                    path: "comments",
+                    select: "_id",
+                },
+                {
+                    path: "likes",
+                    select: "_id",
+                },
+            ],
+        },
+        {
+            path: "stories",
+            select: "content postedAt description isArchived createdAt updatedAt",
+            populate: {
+                path: "author",
+                select: "username profilePicture",
             },
-            {
-                path: "likes",
-                select: "_id",
-            },
-        ],
-    });
+        },
+        {
+            path: "likedPosts", // Populate likedPosts
+            select: "content description likes comments createdAt updatedAt", // Select necessary fields
+            populate: [
+                {
+                    path: "comments",
+                    select: "_id", // Assuming you want to populate comment IDs
+                },
+                {
+                    path: "likes",
+                    select: "_id", // Assuming you want to populate like IDs
+                },
+            ],
+        },
+    ]);
     if (!profile) {
         return res.status(404).json({ message: "User not found" });
     }

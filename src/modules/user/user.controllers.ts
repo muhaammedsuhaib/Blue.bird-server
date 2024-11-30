@@ -12,30 +12,54 @@ export const profile = async (
     return res.status(400).json({ message: "Invalid ID format" });
   }
 
-  const profile = await User.findById(id).populate({
-    path: "posts",
-    select: "content description likes comments createdAt updatedAt",
-    populate: [
-      {
-        path: "comments",
-        select: "_id",
+  const profile = await User.findById(id).populate([
+    {
+      path: "posts",
+      select: "content description likes comments createdAt updatedAt",
+      populate: [
+        {
+          path: "comments",
+          select: "_id",
+        },
+        {
+          path: "likes",
+          select: "_id",
+        },
+      ],
+    },
+    {
+      path: "stories",
+      select: "content postedAt description isArchived createdAt updatedAt",
+      populate: {
+        path: "author",
+        select: "username profilePicture",
       },
-      {
-        path: "likes",
-        select: "_id",
-      },
-    ],
-  });
+    },
+    {
+      path: "likedPosts", // Populate likedPosts
+      select: "content description likes comments createdAt updatedAt", // Select necessary fields
+      populate: [
+        {
+          path: "comments",
+          select: "_id", // Assuming you want to populate comment IDs
+        },
+        {
+          path: "likes",
+          select: "_id", // Assuming you want to populate like IDs
+        },
+      ],
+    },
+  ]);
 
   if (!profile) {
     return res.status(404).json({ message: "User not found" });
   }
+
   return res.status(200).json({
     message: "User profile retrieved successfully",
     data: profile,
   });
 };
-
 export const suggestion_profiles = async (
   req: Request,
   res: Response
